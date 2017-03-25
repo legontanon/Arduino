@@ -59,7 +59,7 @@ public:
 	    uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
 	    uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7);
     
-  void begin(uint8_t cols, uint8_t rows, uint8_t charsize = LCD_5x8DOTS);
+  void begin(uint8_t cols, uint8_t rows, uint8_t charsize = LCD_5x8DOTS, bool inverted_outputs = FALSE);
 
   void clear();
   void home();
@@ -89,7 +89,10 @@ private:
   void write4bits(uint8_t);
   void write8bits(uint8_t);
   void pulseEnable();
-
+	
+  static bool _low;
+  static bool _high;
+	
   uint8_t _rs_pin; // LOW: command.  HIGH: character.
   uint8_t _rw_pin; // LOW: write to LCD.  HIGH: read from LCD.
   uint8_t _enable_pin; // activated by a HIGH pulse.
