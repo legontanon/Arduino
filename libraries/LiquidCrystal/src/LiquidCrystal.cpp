@@ -75,7 +75,11 @@ void LiquidCrystal::init(uint8_t fourbitmode, uint8_t rs, uint8_t rw, uint8_t en
   begin(16, 1);  
 }
 
-void LiquidCrystal::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
+void LiquidCrystal::begin(uint8_t cols, uint8_t lines, uint8_t dotsize, bool inverted_outputs) {
+  
+  _low = inverted_outputs;
+  _high = !inverted_outpts;
+
   if (lines > 1) {
     _displayfunction |= LCD_2LINE;
   }
@@ -106,10 +110,10 @@ void LiquidCrystal::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
   // before sending commands. Arduino can turn on way before 4.5V so we'll wait 50
   delayMicroseconds(50000); 
   // Now we pull both RS and R/W low to begin commands
-  digitalWrite(_rs_pin, LOW);
-  digitalWrite(_enable_pin, LOW);
+  digitalWrite(_rs_pin, _low);
+  digitalWrite(_enable_pin, _low);
   if (_rw_pin != 255) { 
-    digitalWrite(_rw_pin, LOW);
+    digitalWrite(_rw_pin, _low);
   }
   
   //put the LCD into 4 bit or 8 bit mode
@@ -273,11 +277,11 @@ void LiquidCrystal::createChar(uint8_t location, uint8_t charmap[]) {
 /*********** mid level commands, for sending data/cmds */
 
 inline void LiquidCrystal::command(uint8_t value) {
-  send(value, LOW);
+  send(value, _low);
 }
 
 inline size_t LiquidCrystal::write(uint8_t value) {
-  send(value, HIGH);
+  send(value, _high);
   return 1; // assume sucess
 }
 
@@ -289,7 +293,7 @@ void LiquidCrystal::send(uint8_t value, uint8_t mode) {
 
   // if there is a RW pin indicated, set it low to Write
   if (_rw_pin != 255) { 
-    digitalWrite(_rw_pin, LOW);
+    digitalWrite(_rw_pin, _low);
   }
   
   if (_displayfunction & LCD_8BITMODE) {
@@ -301,11 +305,11 @@ void LiquidCrystal::send(uint8_t value, uint8_t mode) {
 }
 
 void LiquidCrystal::pulseEnable(void) {
-  digitalWrite(_enable_pin, LOW);
+  digitalWrite(_enable_pin, _low);
   delayMicroseconds(1);    
-  digitalWrite(_enable_pin, HIGH);
+  digitalWrite(_enable_pin, _high);
   delayMicroseconds(1);    // enable pulse must be >450ns
-  digitalWrite(_enable_pin, LOW);
+  digitalWrite(_enable_pin, _low);
   delayMicroseconds(100);   // commands need > 37us to settle
 }
 
